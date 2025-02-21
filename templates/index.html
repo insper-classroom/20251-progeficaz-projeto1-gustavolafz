@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get-it</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/getit.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo-getit.png') }}" alt="Logo Get-it">
+        <h1>Get-it</h1>
+        <p>Como o Post-it, mas com outro verbo</p>
+    </header>
+    <main>
+        <div class="form-container">
+            <h2>Adicione um card</h2>
+            <form action="{{ url_for('submit_form') }}" method="POST">
+                <input type="text" name="titulo" placeholder="Digite o título..." required>
+                <input type="text" name="detalhes" placeholder="Digite os detalhes..." required>
+                <button type="submit">Criar</button>
+            </form>
+        </div>
+        <div class="cards-container">
+            {% for note in notes %}
+            <div class="card" data-id="{{ note.id }}">
+                <h3 class="card-title">{{ note.TITLE }}</h3>
+                <p class="card-details">{{ note.DETAILS }}</p>
+                <div class="icon">
+                    <i class="fas fa-edit edit-icon" data-id="{{ note.id }}"></i>
+                    <i class="fas fa-trash-alt delete-icon" data-id="{{ note.id }}"></i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const deleteIcons = document.querySelectorAll(".delete-icon");
+
+        deleteIcons.forEach(icon => {
+            icon.addEventListener("click", function() {
+                const noteId = this.dataset.id;
+                
+                if (confirm("Tem certeza que deseja excluir esta nota?")) {
+                    fetch(`/delete_note/${noteId}`, {
+                        method: "GET",
+                    })
+                    .then(response => {
+                        console.log(response);  // Log para verificar erros
+                        if (response.redirected) {
+                            window.location.href = response.url; // Recarrega a página
+                        }
+                    })
+                    .catch(error => console.error("Erro ao excluir:", error));
+                }
+            });
+        });
+    });
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const editIcons = document.querySelectorAll(".edit-icon");
+
+        editIcons.forEach(icon => {
+            icon.addEventListener("click", function() {
+                const noteId = this.dataset.id;
+                window.location.href = `/edit_note/${noteId}`;
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const cardsContainer = document.querySelector(".cards-container");
+
+        new Sortable(cardsContainer, {
+            animation: 150,  // Suaviza a movimentação dos cards
+            ghostClass: "sortable-ghost",  // Classe CSS temporária para visualização ao arrastar
+            onEnd: function (evt) {
+                let order = [];
+                document.querySelectorAll(".card").forEach((card, index) => {
+                    order.push({ id: card.dataset.id, position: index });
+                });
+
+                fetch("/update_card_order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ order }),
+                }).catch(error => console.error("Erro ao salvar ordem:", error));
+            }
+        });
+    });
+</script>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Não Encontrada</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/getit.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo-getit.png') }}" alt="Logo Get-it">
+        <h1>Get-it</h1>
+        <p>Como o Post-it, mas com outro verbo</p>
+    </header>
+    <main>
+        <div class="form-container">
+            <h2>Erro 404</h2>
+            <p>A página que você está procurando não foi encontrada.</p>
+            <a href="{{ url_for('index') }}">Voltar para a página inicial</a>
+        </div>
+    </main>
+</body>
+</html>

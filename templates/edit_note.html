@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Nota</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/getit.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='img/logo-getit.png') }}" alt="Logo Get-it">
+        <h1>Get-it</h1>
+        <p>Como o Post-it, mas com outro verbo</p>
+    </header>
+    
+    <main>
+        <div class="form-container">
+            <h2>Editar Nota</h2>
+            <form method="post" action="{{ url_for('edit_note', note_id=datas.ID) }}">
+                <input type="text" name="title" placeholder="Título da nota" required class="form-control" value="{{ datas.TITLE }}">
+                <input type="text" name="details" placeholder="Detalhes" required class="form-control" value="{{ datas.DETAILS }}">
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
